@@ -1,0 +1,66 @@
+xh-playground {
+    display: block;
+    font-family: Helvetica, Arial, Sans-Serif;
+}
+
+xh-playground figure {
+    cursor: pointer;
+}
+
+xh-playground figure:focus {
+    outline: 0;
+}
+
+xh-playground .cell-repeat {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 1px solid black;
+}
+
+xh-playground .cell-container {
+    height: 100%;
+}
+
+xh-playground .cell-container.active {
+    background-color: pink;
+}
+
+xh-playground .possibles {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px silver solid;
+}
+
+xh-cell {
+    display: block;
+    height: 100%;
+    position: relative;
+}
+
+xh-cell > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+xh-cell .view {
+    font-size: 24px;
+    padding-top: 6px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+xh-cell .scrim {
+    z-index: 100;
+}
+
+.test {
+    background-color: blue;
+}
+
+.test p {
+    background-color: red;
+}
