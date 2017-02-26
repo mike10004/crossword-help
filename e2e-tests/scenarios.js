@@ -1,28 +1,26 @@
 'use strict';
 
-/* https://github.com/angular/protractor/blob/master/docs/toc.md */
-
 describe('my app', function() {
 
-  it('should automatically redirect to /view1 when location hash/fragment is empty', function() {
+  it('should automatically redirect to /home when location hash/fragment is empty', function() {
     browser.get('index.html');
-    expect(browser.getLocationAbsUrl()).toMatch("/view1");
+    expect(browser.getLocationAbsUrl()).toMatch("/home");
   });
 
 
-  describe('view1', function() {
+  describe('home', function() {
 
     beforeEach(function() {
-      browser.get('index.html#!/view1');
+      browser.get('index.html#!/home');
     });
 
 
-    it('should render view1 when user navigates to /view1', function() {
+    it('should render home when user navigates to /home', function() {
       expect(element.all(by.css('[ng-view] h1')).first().getText()).
-        toMatch(/View1/);
+        toMatch(/Crossword Help/);
     });
 
-    it('should render message from arbiter', function(){
+    xit('should get results from Arbiter', function(){
       expect(element.all(by.css('.playground')).first().getText()).toMatch(/hello world/);
     });
   });
