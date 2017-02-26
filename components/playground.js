@@ -130,7 +130,7 @@
     .component('xhPlayground', {
         // scope: {},
         templateUrl: 'components/playground.html',
-        controller: ['Log', 'Arbiter', '$scope', function PlaygroundController(Log, Arbiter, $scope) {
+        controller: ['Log', 'Sequences', '$scope', function PlaygroundController(Log, Sequences, $scope) {
             Log.debug('PlaygroundController');
             const self = this;
             self.possibles = [];
@@ -140,13 +140,12 @@
 
             const modelListener = function(currentTemplate, previousTemplate) {
                 Log.debug('modelListener', currentTemplate, previousTemplate);
-                Arbiter.lookup(currentTemplate)
+                Sequences.lookup(currentTemplate)
                     .then(possibles => {
                         Log.debug('modelListener: possibles', possibles.length);
                         $scope.$apply(function(){
                             updatePossibles(possibles);
                         });
-                        
                     });
             };
             self.model = new PlaygroundModel(5, modelListener);
