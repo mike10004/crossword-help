@@ -1,6 +1,6 @@
-<figure tabindex="1" ng-keyup="$ctrl.figureKeyUpped($event)" ng-blur="$ctrl.blurred($event)">
+<figure>
     <div class="cell-repeat" ng-repeat="cell in $ctrl.model.cells">
-        <div class="cell-container" ng-class="{active: $index === $ctrl.model.activeCellIndex}" ng-click="$ctrl.cellContainerClicked($event, $index)">
+        <div class="cell-container">
             <xh-cell model="cell"></xh-cell>
         </div>
     </div>
