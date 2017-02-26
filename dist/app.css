@@ -23,10 +23,6 @@ xh-playground .cell-container {
     height: 100%;
 }
 
-xh-playground .cell-container.active {
-    background-color: pink;
-}
-
 xh-playground .possibles {
     max-height: 400px;
     overflow-y: auto;
@@ -59,21 +55,17 @@ xh-cell .scrim {
 }
 
 xh-cell .scrim input {
-    color: transparent;
-    text-shadow: 0 0 0 #000;
     width: 100%;
     height: 100%;    
-    opacity: 0;
+    border: none;
+    color: transparent;
+    display: inline-block;
+    font-size: 2em;
+    text-shadow: 0 0 0 black;
+    text-transform: uppercase;
 }
 
 xh-cell .scrim input:focus {
     outline: none;
-}
-
-.test {
-    background-color: blue;
-}
-
-.test p {
-    background-color: red;
+    background-color: pink;
 }

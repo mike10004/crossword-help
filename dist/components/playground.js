@@ -149,20 +149,6 @@
                     });
             };
             self.model = new PlaygroundModel(5, modelListener);
-            self.figureKeyUpped = function($event) {
-                if (self.model.isPlaying()) {
-                    const changed = self.model.enter($event);
-                    $event.stopPropagation();
-                    if (changed) {
-                        Log.debug("figureKeyUpped", $event);
-                        Log.debug("entered", self.model.toString());
-                    }
-                }
-            };
-            self.cellContainerClicked = function($event, $index) {
-                Log.debug("cellContainerClicked", $index);
-                self.model.setActive($index);
-            };
             self.blurred = function($event) {
                 Log.debug("blurred");
                 self.model.deactivate();
