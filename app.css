@@ -5,10 +5,11 @@ xh-playground {
 
 xh-playground figure {
     cursor: pointer;
+    display: inline-block;
 }
 
 xh-playground figure:focus {
-    outline: 0;
+    outline: none;
 }
 
 xh-playground .cell-repeat {
@@ -55,6 +56,15 @@ xh-cell .view {
 
 xh-cell .scrim {
     z-index: 100;
+}
+
+xh-cell .scrim input {
+    color: transparent;
+    text-shadow: 0 0 0 #000;    
+}
+
+xh-cell .scrim input:focus {
+    outline: none;
 }
 
 .test {
