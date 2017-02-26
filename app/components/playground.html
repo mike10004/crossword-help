@@ -5,7 +5,7 @@
         </div>
     </div>
 </figure>
-<div class="possibles">
+<div class="possibles" ng-show="$ctrl.possibles.length > 0">
     <ul>
         <li ng-repeat="word in $ctrl.possibles">{{word}}</li>
     </ul>

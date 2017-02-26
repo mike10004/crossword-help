@@ -4,7 +4,10 @@ angular.module('crosswordHelpApp')
         model: '<'
     },
     templateUrl: 'components/cell.html',
-    controller: ['$log', function PlaygroundController($log) {
-        $log.debug('xhCell', this.model);
+    controller: ['Log', function PlaygroundController(Log) {
+        Log.debug('xhCell', this.model);
+        this.keyUp = function($event) {
+            Log.debug("cell keyUp", $event.code);
+        };
     }]
   });
