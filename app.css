@@ -60,7 +60,10 @@ xh-cell .scrim {
 
 xh-cell .scrim input {
     color: transparent;
-    text-shadow: 0 0 0 #000;    
+    text-shadow: 0 0 0 #000;
+    width: 100%;
+    height: 100%;    
+    opacity: 0;
 }
 
 xh-cell .scrim input:focus {

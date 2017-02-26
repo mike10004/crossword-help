@@ -9,6 +9,6 @@ angular.module('crosswordHelpApp.home', ['ngRoute'])
   });
 }])
 
-.controller('HomeCtrl', [function() {
-  // nothing to do here
+.controller('HomeCtrl', ['$scope', function($scope) {
+  $scope.version = 'r5';
 }]);

@@ -1,4 +1,4 @@
 <div class="view">{{$ctrl.model.value}}</div>
 <div class="scrim">
-    <input type="text" max="1">
+    <input type="text" maxlength="1" ng-keyup="$ctrl.keyUp($event)">
 </div>
