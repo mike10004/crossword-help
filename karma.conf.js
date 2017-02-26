@@ -7,7 +7,9 @@ module.exports = function(config) {
     files: [
       'bower_components/angular/angular.js',
       'bower_components/angular-route/angular-route.js',
-      'bower_components/angular-mocks/angular-mocks.js',
+      'bower_components/dexie/dist/dexie.js',
+      '../node_modules/angular-mocks/angular-mocks.js',
+      '../testing/**/*.js',
       'app.js',
       'components/**/*.js',
       'home/**/*.js'
@@ -15,11 +17,12 @@ module.exports = function(config) {
 
     autoWatch: true,
 
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'jasmine-matchers'],
 
     browsers: ['Chrome'],
 
     plugins: [
+      'karma-jasmine-matchers',
       'karma-chrome-launcher',
       'karma-firefox-launcher',
       'karma-jasmine',
