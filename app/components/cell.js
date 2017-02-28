@@ -14,8 +14,5 @@ angular.module('crosswordHelpApp')
             }
             self.model.value = cleaned;
         };
-        self.keyUp = function($event) {
-            Log.debug("CellController.keyUp", self.model.value, $event.code);
-        };
     }]
   });

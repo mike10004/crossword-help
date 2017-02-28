@@ -1,6 +1,9 @@
+body {
+    font-family: Helvetica, Arial, Sans-Serif;
+}
+
 xh-playground {
     display: block;
-    font-family: Helvetica, Arial, Sans-Serif;
 }
 
 xh-playground figure {
@@ -28,6 +31,19 @@ xh-playground .possibles {
     border: 1px silver solid;
 }
 
+xh-cell .controls {
+    display: none;    
+}
+
+xh-cell input.letter:focus + .controls {
+    display: block;
+}
+
+xh-cell .controls button.remove {
+    border: none;
+    background-color: transparent;
+}
+
 xh-cell {
     display: block;
     height: 100%;
@@ -51,4 +67,19 @@ xh-cell input.letter {
 xh-cell input.letter:focus {
     outline: none;
     background-color: pink;
+}
+
+footer {
+    margin-top: 15px;
+    border-top: 1px solid gray;
+    padding-top: 15px;
+}
+
+footer table td {
+    vertical-align: middle;
+}
+
+footer a.gh-link img {
+    width: 16px;
+    height: 16px;
 }
