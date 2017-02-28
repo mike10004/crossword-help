@@ -4,10 +4,18 @@ angular.module('crosswordHelpApp')
         model: '<'
     },
     templateUrl: 'components/cell.html',
-    controller: ['Log', function PlaygroundController(Log) {
-        Log.debug('xhCell', this.model);
-        this.inputChanged = function() {
-            Log.debug("cell changed");
+    controller: ['Log', function CellController(Log) {
+        const self = this;
+        self.inputChanged = function() {
+            Log.debug("CellController.inputChanged", self.model.value);
+            let cleaned = self.model.value.trim();
+            if (cleaned.length > 1) {
+                cleaned = cleaned[1];
+            }
+            self.model.value = cleaned;
+        };
+        self.keyUp = function($event) {
+            Log.debug("CellController.keyUp", self.model.value, $event.code);
         };
     }]
   });

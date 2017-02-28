@@ -1,3 +1,1 @@
-<div class="scrim">
-    <input type="text" maxlength="1" ng-model="$ctrl.model.value" ng-changed="$ctrl.inputChanged()">
-</div>
+<input class="letter" type="text" maxlength="2" ng-model="$ctrl.model.value" ng-keyup="$ctrl.keyUp($event)" ng-change="$ctrl.inputChanged()">
