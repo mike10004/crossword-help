@@ -10,5 +10,5 @@ angular.module('crosswordHelpApp.home', ['ngRoute'])
 }])
 
 .controller('HomeCtrl', ['$scope', function($scope) {
-  $scope.version = 'r6';
+  
 }]);

@@ -15,20 +15,8 @@
     }
 
     function isHorizontalArrowKey(event) {
-        return event.code === 'ArrowRight' || event.code === 'ArrowLeft';
+        return event.key === 'ArrowRight' || event.key === 'ArrowLeft';
     }
-
-    function toHorizontalMovement(event) {
-        switch (event.code) {
-            case 'ArrowRight':
-                return 1;
-            case 'ArrowLeft':
-                return -1;
-            default:
-                return 0;
-        }
-    }
-
 
     class Cell {
         constructor(value) {
@@ -45,75 +33,24 @@
         }
     }
 
-    const DEACTIVATED = -1;
+    const DEFAULT_PG_OPTIONS = {
+        minNumCells: 3,
+        maxNumCells: 25
+    }
 
     class PlaygroundModel {
         
-        constructor(numCells, subscriber) {
-            this.activeCellIndex = DEACTIVATED;
-            this.cells = new Array(numCells || DEFAULT_NUM_CELLS);
+        constructor(initialNumCells, options) {
+            this.options = angular.extend({}, DEFAULT_PG_OPTIONS, options);
+            this.cells = new Array(initialNumCells || options.minNumCells);
             for (let i = 0; i < this.cells.length; i++) {
                 this.cells[i] = new Cell();
             }
-            this.subscriber = subscriber || angular.noop;
+            this.insertable = this.cells.length < this.options.maxNumCells;
         }
 
-        clamp(index) {
-            return index < 0 ? 0 : (index >= this.cells.length ? this.cells.length - 1 : index);
-        }
-
-        setActive(index) {
-            this.activeCellIndex = this.clamp(index);
-        }
-
-        deactivate() {
-            this.activeCellIndex = DEACTIVATED;
-        }
-
-        move(delta) {
-            const oldIndex = this.activeCellIndex;
-            this.setActive(this.activeCellIndex + delta);
-            const newIndex = this.activeCellIndex;
-            return newIndex - oldIndex;
-        }
-
-        isPlaying() {
-            return this.activeCellIndex >= 0;
-        }
-
-        getActiveCell() {
-            return this.cells[this.activeCellIndex];
-        }
-
-        enter(keyEvent) {
-            let movement = 0;
-            let allowPropagation = false;
-            const active = this.getActiveCell();
-            const previous = this.toTemplate();
-            if (keyEvent.code === 'Backspace') {
-                active.clear();
-                movement = -1;
-            } else if (keyEvent.code === 'Delete') {
-                active.clear();
-                movement = 0;
-            } else if (keyEvent.code === 'Space') {
-                active.clear();
-                movement = 1;
-            } else if (/^[A-Z]$/i.test(keyEvent.key)) {
-                active.setValue(keyEvent.key);
-                movement = 1;
-            } else if (isHorizontalArrowKey(keyEvent)) {
-                movement = toHorizontalMovement(keyEvent);
-            } else { 
-                allowPropagation = true;
-            }
-            const actualMove = this.move(movement);
-            const current = this.toTemplate();
-            if (previous !== current) {
-                this.subscriber(current, previous);
-                return true;
-            }
-            return actualMove !== 0;
+        update() {
+            this.insertable = this.cells.length < this.options.maxNumCells;
         }
 
         toTemplate() {
@@ -124,35 +61,116 @@
             var word = this.toTemplate();
             return word + " active=" + this.activeCellIndex;
         }
+
+        insertCell(cell, position) {
+            if (position < 0) {
+                position = this.cells.length + position;
+            }
+            if (this.cells.length < this.options.maxNumCells) {
+                this.cells.splice(position, 0, cell);
+                this.update();
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        appendCell() {
+            return this.insertCell(new Cell(), this.cells.length);
+        }
+
+        prependCell() {
+            return this.insertCell(new Cell(), 0);
+        }
+
+        remove(cell) {
+            if (this.cells.length > this.options.minNumCells) {
+                if (!angular.isNumber(cell)) {
+                    cell = this.cells.indexOf(cell);
+                }
+                this.cells.splice(cell, 1);
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     ng.module('crosswordHelpApp')
     .component('xhPlayground', {
         // scope: {},
         templateUrl: 'components/playground.html',
-        controller: ['Log', 'Sequences', '$scope', function PlaygroundController(Log, Sequences, $scope) {
-            Log.debug('PlaygroundController');
+        controller: ['Log', 'Sequences', '$scope', '$element', '$timeout', 
+        function PlaygroundController(Log, Sequences, $scope, $element, $timeout) {
+            const NAME = 'PlaygroundController'
+            Log.debug(NAME);
             const self = this;
             self.possibles = [];
             var updatePossibles = function(possibles) {
                 self.possibles = possibles;
             };
 
+            self.model = new PlaygroundModel(5);
+
             const modelListener = function(currentTemplate, previousTemplate) {
-                Log.debug('modelListener', currentTemplate, previousTemplate);
+                Log.debug(NAME, 'modelListener', currentTemplate, previousTemplate);
                 Sequences.lookup(currentTemplate)
                     .then(possibles => {
-                        Log.debug('modelListener: possibles', possibles.length);
+                        Log.debug(NAME, 'modelListener: possibles', possibles.length);
                         $scope.$apply(function(){
                             updatePossibles(possibles);
                         });
                     });
             };
-            self.model = new PlaygroundModel(5, modelListener);
-            self.blurred = function($event) {
-                Log.debug("blurred");
-                self.model.deactivate();
+            $scope.$watch(() => self.model.toTemplate(), modelListener);
+
+            $scope.focusTarget = -1;
+
+            function isRelevantKeyEvent($event) {
+                return $event.key === 'Space'
+                    || $event.key === 'Backspace'
+                    || $event.key === 'Delete'
+                    || isHorizontalArrowKey($event)
+                    || isLetterKeyEvent($event);
             }
+
+            function isLetterKeyEvent($event) {
+                return /^[a-z]$/i.test($event.key);
+            };
+
+            function isAddTriggering($event) {
+                return isLetterKeyEvent($event)
+                    || $event.key === 'ArrowRight';
+            }
+
+            self.cellKeyUp = function($event, $index) {
+                Log.debug(NAME, 'cellKeyUp', $event.key, $index);
+                let focusTarget = $index;
+                if ($event.key === 'ArrowLeft' || $event.key === 'Backspace') {
+                    focusTarget = $index - 1;
+                } else if (isAddTriggering($event)) {
+                    focusTarget = $index + 1;
+                    if ($index === self.model.cells.length - 1) {
+                        if (!self.model.appendCell()) {
+                            focusTarget -= 1;
+                        }
+                    }
+                }
+                $scope.focusTarget = Math.min(focusTarget, self.model.cells.length - 1);
+                $scope.focusTarget = Math.max(0, focusTarget);
+            };
+
+            $scope.$watch('focusTarget', function(newTarget, oldTarget){
+                if (typeof(oldTarget) === 'undefined' || newTarget === oldTarget) {
+                    return; // false alarm
+                }
+                $timeout(function(){
+                    var cellElementInputs = $element.find('.actual xh-cell input.letter');
+                    Log.debug(NAME, '$watch(focusTarget)', cellElementInputs.length, newTarget, oldTarget);
+                    const target = cellElementInputs[newTarget];
+                    target.focus();
+                });
+            });
         }]
     });
 
