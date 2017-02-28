@@ -1,6 +1,4 @@
-<div class="cell">
-    <div class="controls">
-        <button class="remove" ng-click="removeCell($index)">X</button>
-    </div>
-    <input class="letter" type="text" maxlength="2" ng-model="$ctrl.model.value" ng-change="$ctrl.inputChanged()">
+<input class="letter" type="text" maxlength="2" ng-model="$ctrl.model.value" ng-change="$ctrl.inputChanged()" ng-keyup="$ctrl.keyUp($event)" ng-disabled="$ctrl.model.potential">
+<div class="controls">
+    <button class="remove" ng-mousedown="$ctrl.removeClicked()">✕</button>
 </div>

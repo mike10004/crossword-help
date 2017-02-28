@@ -6,13 +6,32 @@ angular.module('crosswordHelpApp')
     templateUrl: 'components/cell.html',
     controller: ['Log', function CellController(Log) {
         const self = this;
-        self.inputChanged = function() {
-            Log.debug("CellController.inputChanged", self.model.value);
-            let cleaned = self.model.value.trim();
+
+        function clean(value) {
+            let cleaned = (value || '').trim();
             if (cleaned.length > 1) {
                 cleaned = cleaned[1];
             }
-            self.model.value = cleaned;
+            return cleaned;
+        }
+
+        self.inputChanged = function() {
+            Log.debug("CellController.inputChanged", self.model.value);
+            self.model.value = clean(self.model.value);
         };
-    }]
+
+        self.removeClicked = function() {
+            Log.debug("CellController.removeClicked");
+            self.playgroundCtrl.model.remove(self.model);
+        };
+
+        self.keyUp = function($event) {
+            if ($event.key === 'Delete') {
+                self.model.value = '';
+            }
+        }
+    }],
+    require: {
+        playgroundCtrl: '^xhPlayground'
+    }
   });
