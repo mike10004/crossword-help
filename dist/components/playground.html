@@ -1,8 +1,12 @@
 <figure>
-    <div class="cell-repeat" ng-repeat="cell in $ctrl.model.cells">
-        <div class="cell-container">
-            <xh-cell model="cell"></xh-cell>
-        </div>
+    <div class="cell-fixture static potential before">
+        <button ng-click="$ctrl.model.prependCell()" ng-disabled="!$ctrl.model.insertable">+</button>
+    </div>
+    <div class="cell-fixture repeat actual" ng-repeat="cell in $ctrl.model.cells">
+        <xh-cell model="cell" ng-keyup="$ctrl.cellKeyUp($event, $index)"></xh-cell>
+    </div>
+    <div class="cell-fixture static potential after">
+        <button ng-click="$ctrl.model.appendCell()" ng-disabled="!$ctrl.model.insertable">+</button>
     </div>
 </figure>
 <div class="possibles" ng-show="$ctrl.possibles.length > 0">

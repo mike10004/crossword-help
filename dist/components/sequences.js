@@ -6,10 +6,9 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
     const DB_VERSION = 1;
 
     function checkDatabase(db) {
-        Log.debug ("checkDatabase", db.name, db.verno);
         const tables = [];
         db.tables.forEach(table => tables.push(table));
-        Log.debug("tables", tables.map(t => t.name));
+        Log.debug ("Sequences.checkDatabase", db.name, db.verno, tables.map(t => t.name));
         if (tables[0] && tables[0].name === 'assets') {
             db.assets = angular.isUndefined(db.assets) ? tables[0] : db.assets; // because dexie hates me
             return true;
@@ -23,22 +22,23 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
         constructor() {
             const self = this;
             const db = new Dexie(DB_NAME);
+            const CN = 'SequenceStore';
             self.dbPromise = new Promise(function(resolve, reject){
                 db.open()
                   .then(function (db) { // if database has already been created
-                    Log.debug("database already exists");
+                    Log.debug(CN, "database already exists");
                     if (checkDatabase(db)) {
                         resolve(db);
                     } else {
                         reject("database failed integrity check");
                     }
                 }).catch('NoSuchDatabaseError', function(e) {  // Database has not yet been created
-                    Log.debug("creating new database");
+                    Log.debug(CN, "creating new database");
                     db.version(DB_VERSION).stores({
                         assets: `sequence, length`
                     });
                     db.open().then(function(){
-                        Log.debug("fetching word list from", Warehouse);
+                        Log.debug(CN, "fetching word list from", Warehouse);
                         Warehouse.fetch().then(function populate(sequences) {
                             Log.debug("populating word list");
                             db.transaction('rw', db.assets, function(){
@@ -47,7 +47,7 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
                                     'length': sequence.length
                                 }));
                             }).then(() => {
-                                Log.debug("inserted words", sequences.length);
+                                Log.debug(CN, "inserted words", sequences.length);
                                 resolve(db);
                             }).catch(reject); // db transaction
                         }).catch(reject); // Warehouse.fetch
@@ -74,30 +74,50 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
         var pattern = '^' + template.split('').map(ch => ch == '_' ? '.' : escapeChar(ch)).join('') + '$';
         var re = new RegExp(pattern, 'i');
         var matches = sequences.filter(word => re.test(word));
-        Log.debug('findMatches', re.source, sequences.length, matches.length);
+        Log.debug('Sequences.findMatches', template, re.source);
         return matches;
     }
 
+    const DEFAULT_LOOKUP_OPTIONS = {
+        offset: 0,
+        limit: 50
+    };
+
     class SequenceLookup {
-        constructor() {
+
+        /**
+         * Modifies an array of matches according to given options.
+         * @returns {array} same argument array modified
+         */
+        apply(options, matches) {
+            matches.splice(0, Math.min(options.offset, matches.length));
+            if (matches.length > options.limit) {
+                matches.splice(options.limit, matches.length - options.limit); 
+            }
+            return matches;
         }
 
-        lookup(template) { // return promise resolving with list of matching sequences
-            const p = new Promise(function(resolve, reject){
+        /**
+         * Looks up matches for a given template.
+         * @returns {Promise} promise that resolves with list of matches
+         */
+        lookup(template, options) { 
+            options = angular.extend({}, DEFAULT_LOOKUP_OPTIONS, options || {});
+            const self = this;
+            return new Promise(function(resolve, reject){
                 store.dbPromise.then(function(db){
                     const assets = db.assets;
-                    Log.debug("looking up template " + template + " in " + assets.name);
+                    Log.debug("SequenceLookup: template", template, assets.name, options);
                     assets
                         .where('length')
                         .equals(template.length)
                         .primaryKeys(function(sequences) {
                             var matches = findMatches(sequences, template);
-                            Log.debug("filtered " + sequences.length + " sequences to " + matches.length);
-                            resolve(matches);
+                            Log.debug("SequenceLookup: filtered sequences", sequences.length, matches.length);
+                            resolve(self.apply(options, matches));
                         }).catch(e => reject(e));                    
                 }).catch(reject);
             });
-            return p;
         }
     }
     Log.debug("Sequences: returning new SequenceLookup");
