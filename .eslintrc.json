@@ -1,0 +1,29 @@
+{
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
+    "rules": {
+        "no-unused-vars": "warn",
+        "semi": ["error", "always"],
+        "no-console": "off"
+    },
+    "globals": {
+        "window": false,
+        "angular": false,
+        "Dexie": false,
+        "Promise": false,
+        "describe": false,
+        "xdescribe": false,
+        "fdescribe": false,
+        "it": false,
+        "xit": false,
+        "fit": false,
+        "inject": false,
+        "beforeEach": false,
+        "afterEach": false,
+        "expect": false,
+        "module": false,
+        "console": false
+    }
+}

@@ -23,11 +23,13 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
             const self = this;
             const db = new Dexie(DB_NAME);
             const CN = 'SequenceStore';
+            self.databaseOpenAction = 'none';
             self.dbPromise = new Promise(function(resolve, reject){
                 db.open()
                   .then(function (db) { // if database has already been created
                     Log.debug(CN, "database already exists");
                     if (checkDatabase(db)) {
+                        self.databaseOpenAction = 'existing';
                         resolve(db);
                     } else {
                         reject("database failed integrity check");
@@ -48,6 +50,7 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
                                 }));
                             }).then(() => {
                                 Log.debug(CN, "inserted words", sequences.length);
+                                self.databaseOpenAction = 'created';
                                 resolve(db);
                             }).catch(reject); // db transaction
                         }).catch(reject); // Warehouse.fetch
@@ -84,6 +87,14 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
     };
 
     class SequenceLookup {
+
+        getDatabaseName() {
+            return DB_NAME;
+        }
+
+        getDatabaseOpenAction() {
+            return store.databaseOpenAction;
+        }
 
         /**
          * Modifies an array of matches according to given options.

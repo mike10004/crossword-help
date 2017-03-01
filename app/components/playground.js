@@ -1,3 +1,5 @@
+'use strict';
+
 (function(ng){
 
     const DEFAULT_NUM_CELLS = 6;

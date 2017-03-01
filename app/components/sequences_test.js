@@ -1,3 +1,5 @@
+/* global FakeWarehouse */
+
 describe('Sequences', function() {
     const FAKE_WAREHOUSE = new FakeWarehouse();
     beforeEach(module('crosswordHelpApp'));
@@ -9,8 +11,9 @@ describe('Sequences', function() {
     beforeEach(inject(function(_Sequences_){
         Sequences = _Sequences_;
     }));
-    afterEach(function(){
+    afterEach(function(done){
         FAKE_WAREHOUSE.stock([]); // clear warehouse
+        window.indexedDB.deleteDatabase(Sequences.getDatabaseName()).then(() => done());
     });
     
     it("lookup", function(done) {
@@ -18,9 +21,10 @@ describe('Sequences', function() {
         FAKE_WAREHOUSE.stock(['beans', 'cabbage', 'cars', 'trees', 'steel', 'trucks', 'ascot']);
         Sequences.lookup('____S')
                 .then(results => {
-                    console.debug("results", results);
+                    console.debug(results.length, "results", results);
                     expect(results).toEqual(['beans', 'trees']);
                     done();
                 }).catch(e => done.fail(e));
     });
+
 });
