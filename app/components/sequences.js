@@ -24,6 +24,7 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
             const db = new Dexie(DB_NAME);
             const CN = 'SequenceStore';
             self.databaseOpenAction = 'none';
+
             self.dbPromise = new Promise(function(resolve, reject){
                 db.open()
                   .then(function (db) { // if database has already been created

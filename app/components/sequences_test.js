@@ -1,6 +1,6 @@
 /* global FakeWarehouse */
 
-describe('Sequences', function() {
+fdescribe('Sequences', function() {
     const FAKE_WAREHOUSE = new FakeWarehouse();
     beforeEach(module('crosswordHelpApp'));
     beforeEach(module(function($provide) {
@@ -13,7 +13,7 @@ describe('Sequences', function() {
     }));
     afterEach(function(done){
         FAKE_WAREHOUSE.stock([]); // clear warehouse
-        window.indexedDB.deleteDatabase(Sequences.getDatabaseName()).then(() => done());
+        Dexie.delete(Sequences.getDatabaseName()).then(() => done()).catch(() => done.fail());
     });
     
     it("lookup", function(done) {

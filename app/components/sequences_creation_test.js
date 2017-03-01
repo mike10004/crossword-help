@@ -13,12 +13,19 @@ describe('Sequences: create first, else use existing', function() {
         Sequences = _Sequences_;
     }));
     const openActions = [];
-    afterEach(function(){
+    afterEach(function(done){
+        //Sequences.shutdown();
         console.debug('openActions', openActions);
         if (openActions.length === 2) {
             expect(openActions[0]).toEqual('created');
             expect(openActions[1]).toEqual('existing');
-            window.indexedDB.deleteDatabase(Sequences.getDatabaseName());
+            Dexie.delete(Sequences.getDatabaseName()).then(() => done());
+            // const delPromise = window.indexedDB.deleteDatabase(Sequences.getDatabaseName());
+            // console.info("delPromise", delPromise, typeof(delPromise));
+            // delPromise.then(() => done());
+//            window.indexedDB.deleteDatabase(Sequences.getDatabaseName());
+        } else {
+            done();
         }
     });
 
