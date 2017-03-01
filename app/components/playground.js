@@ -1,9 +1,6 @@
 'use strict';
 
 (function(ng){
-
-    const DEFAULT_NUM_CELLS = 6;
-    const SPACE = ' ';
     
     function cleanValue(value) {
         value = (value || '').toString().toUpperCase();
@@ -38,7 +35,7 @@
     const DEFAULT_PG_OPTIONS = {
         minNumCells: 3,
         maxNumCells: 25
-    }
+    };
 
     class PlaygroundModel {
         
@@ -116,6 +113,9 @@
 
             const modelListener = function(currentTemplate, previousTemplate) {
                 Log.debug(NAME, 'modelListener', currentTemplate, previousTemplate);
+                if (self.searchDisabled) {
+                    return;
+                }
                 Sequences.lookup(currentTemplate)
                     .then(possibles => {
                         Log.debug(NAME, 'modelListener: possibles', possibles.length);
@@ -138,7 +138,7 @@
 
             function isLetterKeyEvent($event) {
                 return /^[a-z]$/i.test($event.key);
-            };
+            }
 
             function isAddTriggering($event) {
                 return isLetterKeyEvent($event)

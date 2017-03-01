@@ -22,7 +22,7 @@ describe('Sequences', function() {
         Sequences.lookup('____S')
                 .then(results => {
                     console.debug(results.length, "results", results);
-                    expect(results).toEqual(['beans', 'trees']);
+                    expect(results.map(asset => asset.sequence)).toEqual(['beans', 'trees']);
                     done();
                 }).catch(e => done.fail(e));
     });

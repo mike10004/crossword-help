@@ -96,17 +96,17 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
         }
     }
 
-    function findMatches(sequences, template) {
+    function findMatches(assets, template) {
         var pattern = '^' + template.split('').map(ch => ch == '_' ? '.' : escapeChar(ch)).join('') + '$';
         var re = new RegExp(pattern, 'i');
-        var matches = sequences.filter(word => re.test(word));
+        var matches = assets.filter(asset => re.test(asset.sequence));
         Log.debug('Sequences.findMatches', template, re.source);
         return matches;
     }
 
     const DEFAULT_LOOKUP_OPTIONS = {
         offset: 0,
-        limit: 50
+        limit: 1000
     };
 
     class SequenceLookup {
@@ -145,9 +145,9 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
                     assets
                         .where('length')
                         .equals(template.length)
-                        .primaryKeys(function(sequences) {
-                            var matches = findMatches(sequences, template);
-                            Log.debug("SequenceLookup: filtered sequences", sequences.length, matches.length);
+                        .toArray(function(assets) {
+                            var matches = findMatches(assets, template);
+                            Log.debug("SequenceLookup: filtered sequences", assets.length, matches.length);
                             resolve(self.apply(options, matches));
                         }).catch(e => reject(e));                    
                 }).catch(reject);
