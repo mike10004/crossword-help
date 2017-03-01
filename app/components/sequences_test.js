@@ -1,6 +1,6 @@
 /* global FakeWarehouse */
 
-fdescribe('Sequences', function() {
+describe('Sequences', function() {
     const FAKE_WAREHOUSE = new FakeWarehouse();
     beforeEach(module('crosswordHelpApp'));
     beforeEach(module(function($provide) {
