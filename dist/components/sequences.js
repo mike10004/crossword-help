@@ -3,7 +3,7 @@
 angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', function(Log, Warehouse) {
     
     const DB_NAME = 'SequenceDb';
-    const DB_VERSION = 1;
+    const DB_VERSION = 2;
 
     function checkDatabase(db) {
         const tables = [];
@@ -18,16 +18,44 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
         return false;
     }
 
+    const ASSET_PROP_NAMES = {
+        'sq': 'sequence',
+        'rs': 'renderings',
+        'vp': 'vowel_pattern'
+    };
+
+    class Asset {
+        /**
+         * @param {object|string} asset string or object with asset properties
+         */
+        constructor(asset) {
+            if (angular.isString(asset)) {
+                asset = {
+                    sq: asset
+                };
+            }
+            this.length = asset.sq.length;
+            for (let k in ASSET_PROP_NAMES) {
+                if (ASSET_PROP_NAMES.hasOwnProperty(k)) {
+                    this[ASSET_PROP_NAMES[k]] = asset[k];
+                }
+            } 
+        }
+    }
+
     class SequenceStore {
         constructor() {
             const self = this;
             const db = new Dexie(DB_NAME);
             const CN = 'SequenceStore';
+            self.databaseOpenAction = 'none';
+
             self.dbPromise = new Promise(function(resolve, reject){
                 db.open()
                   .then(function (db) { // if database has already been created
                     Log.debug(CN, "database already exists");
                     if (checkDatabase(db)) {
+                        self.databaseOpenAction = 'existing';
                         resolve(db);
                     } else {
                         reject("database failed integrity check");
@@ -35,19 +63,17 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
                 }).catch('NoSuchDatabaseError', function(e) {  // Database has not yet been created
                     Log.debug(CN, "creating new database");
                     db.version(DB_VERSION).stores({
-                        assets: `sequence, length`
+                        assets: `sequence, length, renderings`
                     });
                     db.open().then(function(){
                         Log.debug(CN, "fetching word list from", Warehouse);
-                        Warehouse.fetch().then(function populate(sequences) {
+                        Warehouse.fetch().then(function populate(assets) {
                             Log.debug("populating word list");
                             db.transaction('rw', db.assets, function(){
-                                sequences.forEach(sequence => db.assets.add({
-                                    'sequence': sequence,
-                                    'length': sequence.length
-                                }));
+                                assets.forEach(asset => db.assets.add(new Asset(asset)));
                             }).then(() => {
-                                Log.debug(CN, "inserted words", sequences.length);
+                                Log.debug(CN, "inserted assets", assets.length);
+                                self.databaseOpenAction = 'created';
                                 resolve(db);
                             }).catch(reject); // db transaction
                         }).catch(reject); // Warehouse.fetch
@@ -70,20 +96,28 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
         }
     }
 
-    function findMatches(sequences, template) {
+    function findMatches(assets, template) {
         var pattern = '^' + template.split('').map(ch => ch == '_' ? '.' : escapeChar(ch)).join('') + '$';
         var re = new RegExp(pattern, 'i');
-        var matches = sequences.filter(word => re.test(word));
+        var matches = assets.filter(asset => re.test(asset.sequence));
         Log.debug('Sequences.findMatches', template, re.source);
         return matches;
     }
 
     const DEFAULT_LOOKUP_OPTIONS = {
         offset: 0,
-        limit: 50
+        limit: 1000
     };
 
     class SequenceLookup {
+
+        getDatabaseName() {
+            return DB_NAME;
+        }
+
+        getDatabaseOpenAction() {
+            return store.databaseOpenAction;
+        }
 
         /**
          * Modifies an array of matches according to given options.
@@ -111,9 +145,9 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
                     assets
                         .where('length')
                         .equals(template.length)
-                        .primaryKeys(function(sequences) {
-                            var matches = findMatches(sequences, template);
-                            Log.debug("SequenceLookup: filtered sequences", sequences.length, matches.length);
+                        .toArray(function(assets) {
+                            var matches = findMatches(assets, template);
+                            Log.debug("SequenceLookup: filtered sequences", assets.length, matches.length);
                             resolve(self.apply(options, matches));
                         }).catch(e => reject(e));                    
                 }).catch(reject);

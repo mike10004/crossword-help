@@ -9,6 +9,6 @@ angular.module('crosswordHelpApp.home', ['ngRoute'])
   });
 }])
 
-.controller('HomeCtrl', ['$scope', function($scope) {
-  
+.controller('HomeCtrl', [function() {
+  // nothing to do yet
 }]);

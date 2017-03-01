@@ -11,6 +11,7 @@
 </figure>
 <div class="possibles" ng-show="$ctrl.possibles.length > 0">
     <ul>
-        <li ng-repeat="word in $ctrl.possibles">{{word}}</li>
+        <li ng-repeat="asset in $ctrl.possibles">{{asset.renderings[0]}}</li>
     </ul>
-</div>
+</div>    
+<label><input ng-model="$ctrl.searchDisabled" type="checkbox">Disable search</label>

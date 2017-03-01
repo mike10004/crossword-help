@@ -26,10 +26,11 @@ angular.module('crosswordHelpApp')
         };
 
         self.keyUp = function($event) {
+            Log.debug("CellController.keyUp");
             if ($event.key === 'Delete') {
                 self.model.value = '';
             }
-        }
+        };
     }],
     require: {
         playgroundCtrl: '^xhPlayground'
