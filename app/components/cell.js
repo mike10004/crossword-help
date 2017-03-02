@@ -4,32 +4,16 @@ angular.module('crosswordHelpApp')
         model: '<'
     },
     templateUrl: 'components/cell.html',
-    controller: ['Log', function CellController(Log) {
+    controller: ['Log', 'KeyEvents', function CellController(Log, KeyEvents) {
         const self = this;
-
-        function clean(value) {
-            let cleaned = (value || '').trim();
-            if (cleaned.length > 1) {
-                cleaned = cleaned[1];
-            }
-            return cleaned;
-        }
 
         self.removeClicked = function() {
             Log.debug("CellController.removeClicked");
             self.playgroundCtrl.model.remove(self.model);
         };
 
-        function isBlanker($event) {
-            return $event.key === 'Delete' || $event.key === 'Backspace' || $event.key === ' ';
-        }
-
-        function isLetter($event) {
-            return /^[A-Z]$/i.test($event.key);
-        }
-
         function toMovement($event) {
-            if (isLetter($event)) {
+            if (KeyEvents.isLetter($event)) {
                 return 1;
             }
             switch ($event.key) {
@@ -47,13 +31,17 @@ angular.module('crosswordHelpApp')
         self.keyDown = function($event) {
             Log.debug("CellController.keyDown", $event.key);
             $event.preventDefault();
-            if (isBlanker($event)) {
+            if (KeyEvents.isBlankish($event)) {
                 self.model.value = '';
-            } else if (isLetter($event)) {
-                self.model.value = clean($event.key);
+            } else if (KeyEvents.isLetter($event)) {
+                self.model.value = $event.key;
             }
             const movement = toMovement($event);
             self.playgroundCtrl.keyed($event, self.model, movement);
+        };
+
+        self.focused = function($event) {
+            self.playgroundCtrl.cellFocused($event, self.model);
         };
     }],
     require: {

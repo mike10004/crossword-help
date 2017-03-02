@@ -1,7 +1,7 @@
 class FakeWarehouse {
     constructor(words) {
         this.words = words || [];
-        this.fake = true;
+        this.fail = false;
     }
 
     stock(words) {
@@ -12,7 +12,11 @@ class FakeWarehouse {
         console.info('FakeWarehouse.fetch');
         const self = this;
         const promise = new Promise(function(resolve, reject){
-            resolve(self.words);
+            if (self.fail) {
+                reject('fake failure');
+            } else {
+                resolve(self.words);
+            }
         });
         return promise;
     }

@@ -40,6 +40,17 @@ xh-playground .possibles {
     border: 1px silver solid;
 }
 
+xh-playground .possibles ul {
+    list-style-type: none;
+    padding: 0 10px;
+    margin-top: 10px;
+}
+
+xh-playground .possibles ul > li {
+    float: left;
+    margin: 5px;
+}
+
 xh-playground .potential button {
     border-width: 1px;
     border-style: dashed;
@@ -141,4 +152,9 @@ footer table td {
 footer a.gh-link img {
     width: 16px;
     height: 16px;
+}
+
+img.loading-squares {
+    width: 43px;
+    height: 11px;
 }

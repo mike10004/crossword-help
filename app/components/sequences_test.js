@@ -20,9 +20,9 @@ describe('Sequences', function() {
         expect(Sequences).toBeDefined();
         FAKE_WAREHOUSE.stock(['beans', 'cabbage', 'cars', 'trees', 'steel', 'trucks', 'ascot']);
         Sequences.lookup('____S')
-                .then(results => {
-                    console.debug(results.length, "results", results);
-                    expect(results.map(asset => asset.sequence)).toEqual(['beans', 'trees']);
+                .then(result => {
+                    console.debug(result);
+                    expect(result.matches.map(asset => asset.sequence)).toEqual(['beans', 'trees']);
                     done();
                 }).catch(e => done.fail(e));
     });

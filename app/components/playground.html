@@ -9,6 +9,18 @@
         <button ng-click="$ctrl.model.appendCell()" ng-disabled="!$ctrl.model.insertable">+</button>
     </div>
 </figure>
+<div class="loading-banner" ng-show="$ctrl.storeStatus == 'pending'">
+    <table>
+        <tr>
+            <td><img src="images/loading-squares.gif" title="Loading..."></td>
+            <td>Preparing word database...</td>
+        </tr>
+    </table>
+</div>
+<div class="paging" ng-show="!!$ctrl.paging">
+    <span ng-hide="$ctrl.paging.actual == $ctrl.paging.total">{{$ctrl.paging.offset + 1}} to {{$ctrl.paging.offset + $ctrl.paging.actual}} of </span>
+    {{$ctrl.paging.total}} showing
+</div>
 <div class="possibles" ng-show="$ctrl.possibles.length > 0">
     <ul>
         <li ng-repeat="asset in $ctrl.possibles">{{asset.renderings[0]}}</li>

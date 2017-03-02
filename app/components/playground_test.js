@@ -1,21 +1,34 @@
-describe('component: playground', function() {
-  var $componentController;
+/* global FakeWarehouse */
 
+describe('component: playground', function() {
+  let $componentController, $rootScope;
+  const fakeWarehouse = new FakeWarehouse();
   beforeEach(module('crosswordHelpApp'));
-  beforeEach(inject(function(_$componentController_) {
+  beforeEach(module(function($provide){
+      $provide.value('Warehouse', fakeWarehouse);
+  }));
+  beforeEach(inject(function(_$componentController_, _$rootScope_) {
     $componentController = _$componentController_;
+    $rootScope = _$rootScope_;
   }));
 
   it('should expose a `possibles` array', function() {
-    var ctrl = $componentController('xhPlayground', {'$element': null});
+    let ctrl = $componentController('xhPlayground', {'$element': null, '$scope': $rootScope.$new()});
     expect(ctrl.possibles).toBeArray();
     expect(ctrl.possibles.length).toEqual(0);
   });
 
-  xit('should populate possibles list when model changes', function() {
-    var ctrl = $componentController('xhPlayground', {'$element': null});
-    console.debug(ctrl); // TODO modify cells and call $digest
-  });
+//   it('should populate possibles list when model changes', function(done) {
+//     let $scope = $rootScope.$new();
+//     const locals = {
+//         '$element': null,
+//         '$scope': $scope
+//     };
+//     let ctrl = $componentController('xhPlayground', locals);
+//     console.debug('possibles', ctrl.possibles);
+//     $scope.$digest();
+//   });
+
 });
 
 angular.module('crosswordHelpApp').component('keyTest', {

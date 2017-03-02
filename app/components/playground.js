@@ -13,10 +13,6 @@
         return false;
     }
 
-    function isHorizontalArrowKey(event) {
-        return event.key === 'ArrowRight' || event.key === 'ArrowLeft';
-    }
-
     class Cell {
         constructor(value) {
             this.value = value || '';
@@ -34,16 +30,22 @@
 
     const DEFAULT_PG_OPTIONS = {
         minNumCells: 3,
+        defaultTemplate: '___',
         maxNumCells: 25
     };
 
+    function templateToCellValue(ch) {
+        return /^[A-Z]$/i.test(ch) ? ch : '';
+    }
+
     class PlaygroundModel {
         
-        constructor(initialNumCells, options) {
+        constructor(initial, options) {
             this.options = angular.extend({}, DEFAULT_PG_OPTIONS, options);
-            this.cells = new Array(initialNumCells || options.minNumCells);
+            initial = initial || this.options.defaultTemplate;
+            this.cells = new Array(initial.length);
             for (let i = 0; i < this.cells.length; i++) {
-                this.cells[i] = new Cell();
+                this.cells[i] = new Cell(templateToCellValue(initial[i]));
             }
             this.insertable = this.cells.length < this.options.maxNumCells;
         }
@@ -94,59 +96,64 @@
             }
         }
     }
+    const PARAM_TEMPLATE = 't';
 
     ng.module('crosswordHelpApp')
     .component('xhPlayground', {
         templateUrl: 'components/playground.html',
-        controller: ['Log', 'Sequences', '$scope', '$element', '$timeout', 
-        function PlaygroundController(Log, Sequences, $scope, $element, $timeout) {
+        controller: ['Log', 'Sequences', 'KeyEvents', '$scope', '$element', '$timeout', '$location', 
+        function PlaygroundController(Log, Sequences, KeyEvents, $scope, $element, $timeout, $location) {
             const NAME = 'PlaygroundController';
             Log.debug(NAME);
             const self = this;
             self.possibles = [];
-            var updatePossibles = function(possibles) {
-                self.possibles = possibles;
+            let requestId = 0;
+            var maybeUpdatePossibles = function(result) {
+                Log.debug(NAME, 'maybeUpdatePossibles', requestId, result.toString(), result.paging);
+                if (requestId === result.requestId) { // only update if this is the most recent request
+                    $scope.$apply(function(){
+                        self.possibles = result.matches;
+                        self.paging = result.paging;
+                    });
+                }
             };
+            const initialTemplate = $location.search()[PARAM_TEMPLATE];
+            self.model = new PlaygroundModel(initialTemplate);
 
-            self.model = new PlaygroundModel(5);
+            self.encodeHash = function(currentTemplate) {
+                return encodeURIComponent(PARAM_TEMPLATE) + '=' + encodeURIComponent(currentTemplate);
+            };
 
             const modelListener = function(currentTemplate, previousTemplate) {
                 Log.debug(NAME, 'modelListener', currentTemplate, previousTemplate);
+                $location.search(PARAM_TEMPLATE, currentTemplate);
                 if (self.searchDisabled) {
                     return;
                 }
-                Sequences.lookup(currentTemplate)
-                    .then(possibles => {
-                        Log.debug(NAME, 'modelListener: possibles', possibles.length);
-                        $scope.$apply(function(){
-                            updatePossibles(possibles);
-                        });
-                    });
+                const request = {
+                    'template': currentTemplate, 
+                    'requestId': ++requestId,
+                };
+                Sequences.lookup(request)
+                        .then(maybeUpdatePossibles)
+                        .catch(Log.warn);
             };
             $scope.$watch(() => self.model.toTemplate(), modelListener);
-
-            $scope.focusTarget = -1;
-
-            function isLetterKeyEvent($event) {
-                return /^[a-z]$/i.test($event.key);
-            }
-
-            function isAddTriggering($event) {
-                return isLetterKeyEvent($event)
-                    || $event.key === 'ArrowRight';
-            }
 
             self.keyed = function($event, cell, movement) {
                 const $index = self.model.cells.indexOf(cell);                
                 Log.debug(NAME, 'keyed', $event.key, $index);
-                if (isAddTriggering($event)) {
-                    if ($index === self.model.cells.length - 1) {
-                        self.model.appendCell(); // might not succeed, if we're at limit
-                    }
+                if (KeyEvents.isArrowRight($event) && ($index === self.model.cells.length - 1)) {
+                    self.model.appendCell(); // might not succeed, if we're at limit
                 }
                 const focusTarget = $index + movement;
                 $scope.focusTarget = Math.min(focusTarget, self.model.cells.length - 1);
                 $scope.focusTarget = Math.max(0, focusTarget);
+            };
+
+            self.cellFocused = function($event, cell) {
+                const $index = self.model.cells.indexOf(cell);
+                $scope.focusTarget = $index;
             };
 
             $scope.$watch('focusTarget', function(newTarget, oldTarget){
@@ -159,6 +166,10 @@
                     const target = cellElementInputs[newTarget];
                     target.focus();
                 });
+            });
+
+            $scope.$watch(Sequences.getStoreStatus, function(status) {
+                self.storeStatus = status;
             });
         }]
     });
