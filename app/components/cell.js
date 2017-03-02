@@ -15,21 +15,45 @@ angular.module('crosswordHelpApp')
             return cleaned;
         }
 
-        self.inputChanged = function() {
-            Log.debug("CellController.inputChanged", self.model.value);
-            self.model.value = clean(self.model.value);
-        };
-
         self.removeClicked = function() {
             Log.debug("CellController.removeClicked");
             self.playgroundCtrl.model.remove(self.model);
         };
 
-        self.keyUp = function($event) {
-            Log.debug("CellController.keyUp");
-            if ($event.key === 'Delete') {
-                self.model.value = '';
+        function isBlanker($event) {
+            return $event.key === 'Delete' || $event.key === 'Backspace' || $event.key === ' ';
+        }
+
+        function isLetter($event) {
+            return /^[A-Z]$/i.test($event.key);
+        }
+
+        function toMovement($event) {
+            if (isLetter($event)) {
+                return 1;
             }
+            switch ($event.key) {
+                case 'Backspace':
+                case 'ArrowLeft':
+                    return -1;
+                case 'ArrowRight':
+                case ' ':
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
+
+        self.keyDown = function($event) {
+            Log.debug("CellController.keyDown", $event.key);
+            $event.preventDefault();
+            if (isBlanker($event)) {
+                self.model.value = '';
+            } else if (isLetter($event)) {
+                self.model.value = clean($event.key);
+            }
+            const movement = toMovement($event);
+            self.playgroundCtrl.keyed($event, self.model, movement);
         };
     }],
     require: {
