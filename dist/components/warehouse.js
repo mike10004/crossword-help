@@ -3,7 +3,6 @@
 angular.module('crosswordHelpApp').factory('Warehouse', ['$http', function($http) {
     class Warehouse {
         constructor() {
-            this.fake = false;
         }
 
         fetch() {

@@ -1,4 +1,4 @@
-<input class="letter" type="text" maxlength="1" ng-model="$ctrl.model.value" ng-keydown="$ctrl.keyDown($event)">
+<input class="letter" type="text" maxlength="1" ng-model="$ctrl.model.value" ng-keydown="$ctrl.keyDown($event)" ng-focus="$ctrl.focused($event)">
 <div class="controls">
     <button class="remove" ng-mousedown="$ctrl.removeClicked()">✕</button>
 </div>
