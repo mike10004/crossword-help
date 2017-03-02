@@ -153,7 +153,9 @@
 
             self.cellFocused = function($event, cell) {
                 const $index = self.model.cells.indexOf(cell);
-                $scope.focusTarget = $index;
+                if ($index !== -1) {
+                    $scope.focusTarget = $index;
+                }
             };
 
             $scope.$watch('focusTarget', function(newTarget, oldTarget){
@@ -164,7 +166,9 @@
                     var cellElementInputs = $element.find('.actual xh-cell input.letter');
                     Log.debug(NAME, '$watch(focusTarget)', cellElementInputs.length, newTarget, oldTarget);
                     const target = cellElementInputs[newTarget];
-                    target.focus();
+                    if (!angular.isUndefined(target)) {
+                        target.focus();
+                    }
                 });
             });
 
