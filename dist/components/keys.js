@@ -21,6 +21,10 @@ angular.module('crosswordHelpApp').factory('KeyEvents', [function(){
         isHorizontal($event) {
             return this.isArrowRight($event) || this.isArrowLeft($event);
         }
+
+        hasCtrlOrAlt($event) {
+            return $event.altKey || $event.metaKey || $event.ctrlKey;            
+        }
     }
 
     return new KeyEvents();
