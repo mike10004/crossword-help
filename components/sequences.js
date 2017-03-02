@@ -43,20 +43,27 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
         }
     }
 
+    const STATUS_PENDING = 'pending';
+    const STATUS_READY = 'ready';
+
     class SequenceStore {
         constructor() {
             const self = this;
             const db = new Dexie(DB_NAME);
             const CN = 'SequenceStore';
             self.databaseOpenAction = 'none';
-
+            self.status = STATUS_PENDING;
+            function doResolve(resolve, resolution) {
+                resolve(resolution);
+                self.status = STATUS_READY;
+            }
             self.dbPromise = new Promise(function(resolve, reject){
                 db.open()
                   .then(function (db) { // if database has already been created
                     Log.debug(CN, "database already exists");
                     if (checkDatabase(db)) {
                         self.databaseOpenAction = 'existing';
-                        resolve(db);
+                        doResolve(resolve, db);
                     } else {
                         reject("database failed integrity check");
                     }
@@ -74,7 +81,7 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
                             }).then(() => {
                                 Log.debug(CN, "inserted assets", assets.length);
                                 self.databaseOpenAction = 'created';
-                                resolve(db);
+                                doResolve(resolve, db);
                             }).catch(reject); // db transaction
                         }).catch(reject); // Warehouse.fetch
                     }).catch(reject); // db opening
@@ -109,47 +116,84 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
         limit: 1000
     };
 
+    class Paging {
+        constructor(offset, limit, total, actual) {
+            this.offset = offset;
+            this.limit = limit;
+            this.total = total;
+            this.actual = actual;
+        }
+    }
+
+    class LookupResult {
+        constructor(matches, requestId, paging) {
+            this.matches = matches;
+            this.requestId = requestId;
+            this.paging = paging;
+        }
+
+        toString() {
+            return 'LookupResult{requestId=' + this.requestId + ',matches.length=' + this.matches.length + '}';
+        }
+    }
+
     class SequenceLookup {
 
         getDatabaseName() {
             return DB_NAME;
         }
 
+        /**
+         * Gets a code indicating the action taken when opening the database was requested.
+         * This is for testing purposes, to evaluate whether subsequent launches use an existing
+         * database.
+         * @returns {string} action code, 'none', 'created', or 'existing'
+         */
         getDatabaseOpenAction() {
             return store.databaseOpenAction;
         }
 
+        getStoreStatus() {
+            return store.status;
+        }
+
         /**
          * Modifies an array of matches according to given options.
-         * @returns {array} same argument array modified
+         * @returns {object} paging object
          */
         apply(options, matches) {
+            const total = matches.length;
             matches.splice(0, Math.min(options.offset, matches.length));
             if (matches.length > options.limit) {
                 matches.splice(options.limit, matches.length - options.limit); 
             }
-            return matches;
+            return new Paging(options.offset, options.limit, total, matches.length);
         }
 
         /**
          * Looks up matches for a given template.
-         * @returns {Promise} promise that resolves with list of matches
+         * @param {object} request object with 'template' and 'requestId' properties
+         * @param {object} options options object
+         * @returns {Promise} promise that resolves with LookupResult object
          */
-        lookup(template, options) { 
+        lookup(request, options) {
+            const template = angular.isString(request) ? request : request.template;
+            const requestId = request.requestId;
             options = angular.extend({}, DEFAULT_LOOKUP_OPTIONS, options || {});
             const self = this;
             return new Promise(function(resolve, reject){
                 store.dbPromise.then(function(db){
                     const assets = db.assets;
                     Log.debug("SequenceLookup: template", template, assets.name, options);
-                    assets
-                        .where('length')
+                    assets.where('length')
                         .equals(template.length)
-                        .toArray(function(assets) {
-                            var matches = findMatches(assets, template);
+                        .toArray()
+                        .then(function(assets) {
+                            let matches = findMatches(assets, template);
                             Log.debug("SequenceLookup: filtered sequences", assets.length, matches.length);
-                            resolve(self.apply(options, matches));
-                        }).catch(e => reject(e));                    
+                            const paging = self.apply(options, matches);
+                            resolve(new LookupResult(matches, requestId, paging));
+                        }).catch(reject);                    
                 }).catch(reject);
             });
         }
