@@ -97,11 +97,10 @@
 
     ng.module('crosswordHelpApp')
     .component('xhPlayground', {
-        // scope: {},
         templateUrl: 'components/playground.html',
         controller: ['Log', 'Sequences', '$scope', '$element', '$timeout', 
         function PlaygroundController(Log, Sequences, $scope, $element, $timeout) {
-            const NAME = 'PlaygroundController'
+            const NAME = 'PlaygroundController';
             Log.debug(NAME);
             const self = this;
             self.possibles = [];
@@ -128,14 +127,6 @@
 
             $scope.focusTarget = -1;
 
-            function isRelevantKeyEvent($event) {
-                return $event.key === 'Space'
-                    || $event.key === 'Backspace'
-                    || $event.key === 'Delete'
-                    || isHorizontalArrowKey($event)
-                    || isLetterKeyEvent($event);
-            }
-
             function isLetterKeyEvent($event) {
                 return /^[a-z]$/i.test($event.key);
             }
@@ -145,19 +136,15 @@
                     || $event.key === 'ArrowRight';
             }
 
-            self.cellKeyUp = function($event, $index) {
-                Log.debug(NAME, 'cellKeyUp', $event.key, $index);
-                let focusTarget = $index;
-                if ($event.key === 'ArrowLeft' || $event.key === 'Backspace') {
-                    focusTarget = $index - 1;
-                } else if (isAddTriggering($event)) {
-                    focusTarget = $index + 1;
+            self.keyed = function($event, cell, movement) {
+                const $index = self.model.cells.indexOf(cell);                
+                Log.debug(NAME, 'keyed', $event.key, $index);
+                if (isAddTriggering($event)) {
                     if ($index === self.model.cells.length - 1) {
-                        if (!self.model.appendCell()) {
-                            focusTarget -= 1;
-                        }
+                        self.model.appendCell(); // might not succeed, if we're at limit
                     }
                 }
+                const focusTarget = $index + movement;
                 $scope.focusTarget = Math.min(focusTarget, self.model.cells.length - 1);
                 $scope.focusTarget = Math.max(0, focusTarget);
             };
