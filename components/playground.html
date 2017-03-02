@@ -3,7 +3,7 @@
         <button ng-click="$ctrl.model.prependCell()" ng-disabled="!$ctrl.model.insertable">+</button>
     </div>
     <div class="cell-fixture repeat actual" ng-repeat="cell in $ctrl.model.cells">
-        <xh-cell model="cell" ng-keyup="$ctrl.cellKeyUp($event, $index)"></xh-cell>
+        <xh-cell model="cell"></xh-cell>
     </div>
     <div class="cell-fixture static potential after">
         <button ng-click="$ctrl.model.appendCell()" ng-disabled="!$ctrl.model.insertable">+</button>

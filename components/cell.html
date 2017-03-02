@@ -1,4 +1,4 @@
-<input class="letter" type="text" maxlength="1" ng-model="$ctrl.model.value" ng-change="$ctrl.inputChanged()" ng-keyup="$ctrl.keyUp($event)" ng-disabled="$ctrl.model.potential">
+<input class="letter" type="text" maxlength="1" ng-model="$ctrl.model.value" ng-keydown="$ctrl.keyDown($event)">
 <div class="controls">
     <button class="remove" ng-mousedown="$ctrl.removeClicked()">✕</button>
 </div>
