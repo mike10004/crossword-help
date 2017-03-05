@@ -1,4 +1,8 @@
-<input class="letter" type="text" maxlength="1" ng-model="$ctrl.model.value" ng-keydown="$ctrl.keyDown($event)" ng-focus="$ctrl.focused($event)">
+<input class="letter" type="text" maxlength="1" ng-model="$ctrl.model.value" 
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        ng-keydown="$ctrl.keyDown($event)"
+        ng-focus="$ctrl.focused($event, 'no-touch')">
+<div class="letter" ng-class="{focus: $ctrl.index == $ctrl.focusTarget}" ng-click="$ctrl.focused($event, 'touch')">{{$ctrl.model.value}}</div>
 <div class="controls">
     <button class="remove" ng-mousedown="$ctrl.removeClicked()">✕</button>
 </div>

@@ -45,19 +45,23 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
 
     const STATUS_PENDING = 'pending';
     const STATUS_READY = 'ready';
+    const STATUS_UNKNOWN = 'unknown';
 
-    class SequenceStore {
-        constructor() {
-            const self = this;
-            const db = new Dexie(DB_NAME);
-            const CN = 'SequenceStore';
-            self.databaseOpenAction = 'none';
-            self.status = STATUS_PENDING;
-            function doResolve(resolve, resolution) {
-                resolve(resolution);
-                self.status = STATUS_READY;
-            }
-            self.dbPromise = new Promise(function(resolve, reject){
+    function SequenceStore() {
+        const self = this;
+        const db = new Dexie(DB_NAME);
+        const CN = 'SequenceStore';
+        self.databaseOpenAction = 'none';
+        self.status = STATUS_UNKNOWN;
+        function doResolve(resolve, resolution) {
+            self.status = STATUS_READY;
+            Log.debug('SequenceStore.status', self.status);
+            resolve(resolution);
+        }
+
+        self.db = function() {
+            return self.dbPromise = self.dbPromise || (new Promise(function(resolve, reject){
+                self.status = STATUS_PENDING;
                 db.open()
                   .then(function (db) { // if database has already been created
                     Log.debug(CN, "database already exists");
@@ -65,6 +69,7 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
                         self.databaseOpenAction = 'existing';
                         doResolve(resolve, db);
                     } else {
+                        self.status = STATUS_UNKNOWN;
                         reject("database failed integrity check");
                     }
                 }).catch('NoSuchDatabaseError', function(e) {  // Database has not yet been created
@@ -86,8 +91,8 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
                         }).catch(reject); // Warehouse.fetch
                     }).catch(reject); // db opening
                 }).catch(reject); // db opening error that is not NoSuchDatabaseError
-            });
-        }
+            }));
+        };
     }
     const store = new SequenceStore();
     Log.debug("Sequences: constructed SequenceStore");
@@ -182,7 +187,7 @@ angular.module('crosswordHelpApp').factory('Sequences', ['Log', 'Warehouse', fun
             options = angular.extend({}, DEFAULT_LOOKUP_OPTIONS, options || {});
             const self = this;
             return new Promise(function(resolve, reject){
-                store.dbPromise.then(function(db){
+                store.db().then(function(db){
                     const assets = db.assets;
                     Log.debug("SequenceLookup: template", template, assets.name, options);
                     assets.where('length')

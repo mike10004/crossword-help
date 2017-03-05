@@ -1,14 +1,14 @@
 'use strict';
 
-describe('crosswordHelpApp.home module', function() {
+describe('crosswordHelpApp module', function() {
 
-  beforeEach(module('crosswordHelpApp.home'));
+  beforeEach(module('crosswordHelpApp'));
 
   describe('home controller', function(){
 
-    it('should ....', inject(function($controller) {
+    it('should ....', inject(function($controller, $rootScope) {
       //spec body
-      var homeCtrl = $controller('HomeCtrl');
+      var homeCtrl = $controller('HomeCtrl', {'$scope': $rootScope.$new()});
       expect(homeCtrl).toBeDefined();
     }));
 

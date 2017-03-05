@@ -1,35 +1,22 @@
 angular.module('crosswordHelpApp')
 .component('xhCell', {
     bindings: {
-        model: '<'
+        model: '<',
+        index: '<',
+        focusTarget: '<'
     },
     templateUrl: 'components/cell.html',
     controller: ['Log', 'KeyEvents', '$document', function CellController(Log, KeyEvents, $document) {
         const self = this;
-
+        const CTRL = 'CellController';
         self.removeClicked = function() {
-            Log.debug("CellController.removeClicked");
-            self.playgroundCtrl.model.remove(self.model);
+            Log.debug(CTRL, "removeClicked");
+            self.playgroundCtrl.model.remove(self.index);
         };
 
-        function toMovement($event) {
-            if (KeyEvents.isLetter($event)) {
-                return 1;
-            }
-            switch ($event.key) {
-                case 'Backspace':
-                case 'ArrowLeft':
-                    return -1;
-                case 'ArrowRight':
-                case ' ':
-                    return 1;
-                default:
-                    return 0;
-            }
-        }
-
         self.keyDown = function($event) {
-            Log.debug("CellController.keyDown", $event.key);
+            $event = KeyEvents.norm($event);
+            Log.debug(CTRL, "keyDown", 'key', $event.key);
             // TODO: only preventDefault if target has focus and no modifier key is down
             if ($document[0].activeElement === $event.target && !KeyEvents.hasCtrlOrAlt($event)) {            
                 $event.preventDefault();
@@ -38,13 +25,14 @@ angular.module('crosswordHelpApp')
                 } else if (KeyEvents.isLetter($event)) {
                     self.model.value = $event.key;
                 }
-                const movement = toMovement($event);
-                self.playgroundCtrl.keyed($event, self.model, movement);
+                const movement = KeyEvents.toMovement($event);
+                self.playgroundCtrl.keyed($event, self.index, movement);
             }
         };
 
-        self.focused = function($event) {
-            self.playgroundCtrl.cellFocused($event, self.model);
+        self.focused = function($event, type) {
+            Log.debug(CTRL, "focused", type, self.index);
+            self.playgroundCtrl.cellFocused(self.index);
         };
     }],
     require: {
