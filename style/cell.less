@@ -1,0 +1,92 @@
+
+xh-cell {
+    display: block;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+/* https://stackoverflow.com/questions/23515754/how-to-remove-the-blinking-cursor-from-an-input-type-textbox */
+xh-cell .letter {
+    width: 100%;
+    height: 40px;    
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+    font-size: 2em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0;
+}
+
+.touch xh-cell input.letter {
+    display: none;    
+}
+
+.no-touch xh-cell input.letter {
+    display: inline-block;
+}
+
+.no-touch xh-cell div.letter {
+    display: none;
+}
+
+.touch xh-cell div.letter {
+    display: inline-block;
+}
+
+xh-cell input.letter {
+    color: transparent;
+    text-shadow: 0 0 0 black;
+}
+
+xh-cell div.letter {
+    color: black;
+}
+
+xh-cell .letter.focus {
+    outline: none;
+    background-color: pink;
+}
+
+xh-cell .letter:focus {
+    outline: none;
+    background-color: pink;
+}
+
+xh-cell .controls {
+    height: 20px;
+    text-align: center;
+}
+
+xh-cell .controls button {
+    visibility: hidden;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+    padding: 2px 4px;
+    margin: 0;
+    background-color: transparent;
+    color: lightgray;
+    border-radius: 4px;
+}
+
+xh-cell .controls button:hover {
+    border-color: lightgray;
+}
+
+/* this doesn't work but it's important for mobile; we'd like to 
+   make the remove button visible whenever an input has focus */
+xh-cell input.letter:focused+.controls button {
+    visibility: visible;
+}
+
+.cell-fixture:hover xh-cell .controls button {
+    visibility: visible;
+}
+
+xh-cell .something {
+    color: #fff;
+}

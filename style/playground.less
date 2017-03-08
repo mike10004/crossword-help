@@ -1,0 +1,115 @@
+xh-playground {
+    display: block;
+}
+
+xh-playground figure {
+    display: inline-block;
+    padding-bottom: 20px;
+}
+
+xh-playground figure:focus {
+    outline: none;
+}
+
+xh-playground .cell-fixture {
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 60px;
+}
+
+xh-playground .cell-fixture.potential {
+    top: 3px;
+}
+
+xh-playground .cell-fixture.after {
+    left: -3px;
+}
+
+xh-playground .cell-fixture.before {
+    right: -4px;
+}
+
+xh-playground .potential button {
+    border-width: 1px;
+    border-style: dashed;
+    border-color: lightgray;
+    background-color: transparent;
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    color: transparent;
+    font-size: 20pt;
+}
+
+xh-playground .potential button:disabled {
+    cursor: default;
+}
+
+xh-playground .potential button:hover {
+    color: lightgray;
+}
+
+xh-playground .potential button:focus {
+    outline: none;
+}
+
+xh-playground .swingset .controls > * {
+    display: inline-block;
+}
+
+xh-playground .swingset .controls .search {
+    display: none;
+}
+
+xh-playground .possibles {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px silver solid;
+}
+
+xh-playground .possibles ul {
+    list-style-type: none;
+    padding: 0 10px;
+    margin-top: 10px;
+}
+
+xh-playground .possibles ul > li {
+    float: left;
+    margin: 5px;
+}
+
+xh-playground .keyboard {
+    height: 216px;
+}
+
+xh-playground .slide.hidden .keyboard {
+    display: none;
+}
+
+xh-playground .keyboard button {
+    height: 48px;
+    width: auto;
+    padding: 0 10px;
+}
+
+xh-playground .keyboard .row {
+
+}
+
+xh-playground .keyboard .row:last-child {
+    margin-top: 10px;
+}
+
+xh-playground .keyboard .row:last-child button {
+    width: auto;
+}
+
+xh-playground .kb-controls {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: none;
+}

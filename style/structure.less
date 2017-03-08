@@ -1,0 +1,120 @@
+body {
+    font-family: Helvetica, Arial, Sans-Serif;
+}
+
+.touch footer {
+    display: none;
+}
+
+.touch body {
+  margin: 0;
+}
+
+.woodchips {
+}
+
+.colors .monkeybars {
+  background-color: green;
+  border-color: darkgreen;
+}
+
+.colors .swingset {
+  background-color: blue;
+  border-color: darkblue;
+}
+
+.colors .slide {
+  background-color: magenta;
+  border-color: darkmagenta;
+}
+
+.slide {
+  display: none;
+}
+
+@monkeybars-height: 80px;
+@swingset-margin: 40px;
+@slide-height: 256px;
+
+.touch .woodchips {
+  position: fixed;
+  bottom: @slide-height;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.touch .monkeybars {
+  height: @monkeybars-height;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.touch .swingset {
+  position: absolute;
+  top: @monkeybars-height + @swingset-margin;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+}
+
+.touch .slide {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: @slide-height;
+  display: inherit;
+}
+
+@slide-max-width: 480px;
+
+@media screen and (min-width: @slide-max-width) and (orientation: landscape) {
+
+  .touch .woodchips {
+    position: relative;
+    width: @slide-max-width;
+    margin-bottom: @slide-height;
+  }
+
+  .touch .monkeybars {
+    height: auto;
+    white-space: normal;
+  }
+
+  .touch .swingset {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: @slide-max-width;
+  }
+
+  .touch .slide {
+    right: auto;
+    width: @slide-max-width;
+  }
+
+}
+
+
+footer {
+    margin-top: 15px;
+    border-top: 1px solid gray;
+    padding-top: 15px;
+}
+
+footer table td {
+    vertical-align: middle;
+}
+
+footer a.gh-link img {
+    width: 16px;
+    height: 16px;
+}
+
+img.loading-squares {
+    width: 43px;
+    height: 11px;
+}

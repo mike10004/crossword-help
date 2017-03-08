@@ -1,264 +1,256 @@
 body {
-    font-family: Helvetica, Arial, Sans-Serif;
+  font-family: Helvetica, Arial, Sans-Serif;
 }
-
 .touch footer {
-    display: none;
+  display: none;
 }
-
-.touch .log-interface {
-    display: none;
+.touch body {
+  margin: 0;
 }
-
-xh-playground {
-    display: block;
+.colors .monkeybars {
+  background-color: green;
+  border-color: darkgreen;
 }
-
-xh-playground figure {
-    display: inline-block;
-    padding-bottom: 20px;
+.colors .swingset {
+  background-color: blue;
+  border-color: darkblue;
 }
-
-xh-playground figure:focus {
-    outline: none;
+.colors .slide {
+  background-color: magenta;
+  border-color: darkmagenta;
 }
-
-xh-playground .cell-fixture {
-    display: inline-block;
+.slide {
+  display: none;
+}
+.touch .woodchips {
+  position: fixed;
+  bottom: 256px;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.touch .monkeybars {
+  height: 80px;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+.touch .swingset {
+  position: absolute;
+  top: 120px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+}
+.touch .slide {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 256px;
+  display: inherit;
+}
+@media screen and (min-width: 480px) and (orientation: landscape) {
+  .touch .woodchips {
     position: relative;
-    width: 40px;
-    height: 60px;
-}
-
-xh-playground .cell-fixture.potential {
-    top: 3px;
-}
-
-xh-playground .cell-fixture.after {
-    left: -3px;
-}
-
-xh-playground .cell-fixture.before {
-    right: -4px;
-}
-
-xh-playground .possibles {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px silver solid;
-}
-
-xh-playground .possibles ul {
-    list-style-type: none;
-    padding: 0 10px;
-    margin-top: 10px;
-}
-
-xh-playground .possibles ul > li {
-    float: left;
-    margin: 5px;
-}
-
-xh-playground .potential button {
-    border-width: 1px;
-    border-style: dashed;
-    border-color: lightgray;
-    background-color: transparent;
-    width: 42px;
-    height: 42px;
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    color: transparent;
-    font-size: 20pt;
-}
-
-xh-playground .potential button:disabled {
-    cursor: default;
-}
-
-xh-playground .potential button:hover {
-    color: lightgray;
-}
-
-xh-playground .potential button:focus {
-    outline: none;
-}
-
-.no-touch xh-playground .slide {
-    display: none;
-}
-
-.touch xh-playground .swingset {
-    padding-bottom: 248px;
-}
-
-xh-playground .slide {
+    width: 480px;
+    margin-bottom: 256px;
+  }
+  .touch .monkeybars {
+    height: auto;
+    white-space: normal;
+  }
+  .touch .swingset {
     position: fixed;
-    bottom: 0;
-    left: 0;
+    top: 0;
     right: 0;
-    text-align: center;
-    height: 248px;
-    background-color: #404040;
+    bottom: 0;
+    left: 480px;
+  }
+  .touch .slide {
+    right: auto;
+    width: 480px;
+  }
 }
-
+footer {
+  margin-top: 15px;
+  border-top: 1px solid gray;
+  padding-top: 15px;
+}
+footer table td {
+  vertical-align: middle;
+}
+footer a.gh-link img {
+  width: 16px;
+  height: 16px;
+}
+img.loading-squares {
+  width: 43px;
+  height: 11px;
+}
+xh-playground {
+  display: block;
+}
+xh-playground figure {
+  display: inline-block;
+  padding-bottom: 20px;
+}
+xh-playground figure:focus {
+  outline: none;
+}
+xh-playground .cell-fixture {
+  display: inline-block;
+  position: relative;
+  width: 40px;
+  height: 60px;
+}
+xh-playground .cell-fixture.potential {
+  top: 3px;
+}
+xh-playground .cell-fixture.after {
+  left: -3px;
+}
+xh-playground .cell-fixture.before {
+  right: -4px;
+}
+xh-playground .potential button {
+  border-width: 1px;
+  border-style: dashed;
+  border-color: lightgray;
+  background-color: transparent;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  color: transparent;
+  font-size: 20pt;
+}
+xh-playground .potential button:disabled {
+  cursor: default;
+}
+xh-playground .potential button:hover {
+  color: lightgray;
+}
+xh-playground .potential button:focus {
+  outline: none;
+}
 xh-playground .swingset .controls > * {
-    display: inline-block;
+  display: inline-block;
 }
-
+xh-playground .swingset .controls .search {
+  display: none;
+}
+xh-playground .possibles {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px silver solid;
+}
+xh-playground .possibles ul {
+  list-style-type: none;
+  padding: 0 10px;
+  margin-top: 10px;
+}
+xh-playground .possibles ul > li {
+  float: left;
+  margin: 5px;
+}
 xh-playground .keyboard {
-    height: 216px;
+  height: 216px;
 }
-
+xh-playground .slide.hidden .keyboard {
+  display: none;
+}
 xh-playground .keyboard button {
-    height: 48px;
-    width: auto;
-    padding: 0 10px;
+  height: 48px;
+  width: auto;
+  padding: 0 10px;
 }
-
-xh-playground .keyboard .row {
-
-}
-
 xh-playground .keyboard .row:last-child {
-    margin-top: 10px;
+  margin-top: 10px;
 }
-
 xh-playground .keyboard .row:last-child button {
-    width: auto;
+  width: auto;
 }
-
+xh-playground .kb-controls {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: none;
+}
 xh-cell {
-    display: block;
-    height: 100%;
-    width: 100%;
-    position: relative;
+  display: block;
+  height: 100%;
+  width: 100%;
+  position: relative;
 }
-
 /* https://stackoverflow.com/questions/23515754/how-to-remove-the-blinking-cursor-from-an-input-type-textbox */
 xh-cell .letter {
-    width: 100%;
-    height: 40px;    
-    cursor: pointer;
-    border-width: 1px;
-    border-style: solid;
-    border-color: black;
-    font-size: 2em;
-    text-transform: uppercase;
-    text-align: center;
-    padding: 0;
+  width: 100%;
+  height: 40px;
+  cursor: pointer;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  font-size: 2em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0;
 }
-
 .touch xh-cell input.letter {
-    display: none;    
+  display: none;
 }
-
 .no-touch xh-cell input.letter {
-    display: inline-block;
+  display: inline-block;
 }
-
 .no-touch xh-cell div.letter {
-    display: none;
+  display: none;
 }
-
 .touch xh-cell div.letter {
-    display: inline-block;
+  display: inline-block;
 }
-
 xh-cell input.letter {
-    color: transparent;
-    text-shadow: 0 0 0 black;
+  color: transparent;
+  text-shadow: 0 0 0 black;
 }
-
 xh-cell div.letter {
-    color: black;
+  color: black;
 }
-
 xh-cell .letter.focus {
-    outline: none;
-    background-color: pink;
+  outline: none;
+  background-color: pink;
 }
-
 xh-cell .letter:focus {
-    outline: none;
-    background-color: pink;
+  outline: none;
+  background-color: pink;
 }
-
 xh-cell .controls {
-    height: 20px;
-    text-align: center;
+  height: 20px;
+  text-align: center;
 }
-
 xh-cell .controls button {
-    visibility: hidden;
-    cursor: pointer;
-    border-width: 1px;
-    border-style: solid;
-    border-color: transparent;
-    padding: 2px 4px;
-    margin: 0;
-    background-color: transparent;
-    color: lightgray;
-    border-radius: 4px;
+  visibility: hidden;
+  cursor: pointer;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  padding: 2px 4px;
+  margin: 0;
+  background-color: transparent;
+  color: lightgray;
+  border-radius: 4px;
 }
-
 xh-cell .controls button:hover {
-    border-color: lightgray;
+  border-color: lightgray;
 }
-
 /* this doesn't work but it's important for mobile; we'd like to 
    make the remove button visible whenever an input has focus */
-xh-cell input.letter:focused+.controls button {
-    visibility: visible;
+xh-cell input.letter:focused + .controls button {
+  visibility: visible;
 }
-
 .cell-fixture:hover xh-cell .controls button {
-    visibility: visible;
+  visibility: visible;
 }
-
-footer {
-    margin-top: 15px;
-    border-top: 1px solid gray;
-    padding-top: 15px;
-}
-
-footer table td {
-    vertical-align: middle;
-}
-
-footer a.gh-link img {
-    width: 16px;
-    height: 16px;
-}
-
-img.loading-squares {
-    width: 43px;
-    height: 11px;
-}
-
-xh-logbook {
-    display: block;
-    border: 1px dotted gray;
-    max-height: 300px;
-    max-width: 100%;
-    overflow: auto;
-    word-break: break-all;
-    font-size: 9pt;
-}
-
-xh-logbook .debug {
-    background-color: transparent;
-}
-
-xh-logbook .info {
-    background-color: palegoldenrod;
-}
-
-xh-logbook .warn {
-    background-color: lightpink;
-}
-
-xh-logbook .error {
-    background-color: lightcoral;
+xh-cell .something {
+  color: #fff;
 }

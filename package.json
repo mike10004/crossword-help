@@ -19,10 +19,12 @@
     "karma-jasmine": "^0.3.8",
     "karma-jasmine-matchers": "^3.6.0",
     "karma-junit-reporter": "^0.4.1",
+    "less": "^2.7.2",
+    "less-watch-compiler": "^1.4.2",
     "protractor": "^4.0.9"
   },
   "scripts": {
-    "postinstall": "bower install",
+    "postinstall": "bower install && lessc --verbose 'style/app.less' app/app.css",
     "update-deps": "npm update",
     "postupdate-deps": "bower update",
     "prestart": "npm install",
@@ -33,6 +35,7 @@
     "preupdate-webdriver": "npm install",
     "update-webdriver": "webdriver-manager update",
     "preprotractor": "npm run update-webdriver",
-    "protractor": "protractor e2e-tests/protractor.conf.js"
+    "protractor": "protractor e2e-tests/protractor.conf.js",
+    "watch-css": "less-watch-compiler style app app.less"
   }
 }
