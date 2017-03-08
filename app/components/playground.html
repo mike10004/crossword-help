@@ -1,46 +1,48 @@
-<figure>
-    <div class="cell-fixture static potential before">
-        <button ng-click="$ctrl.model.prependCell()" ng-disabled="!$ctrl.model.insertable">+</button>
-    </div>
-    <div class="cell-fixture repeat actual" ng-repeat="cell in $ctrl.model.cells">
-        <xh-cell model="cell" index="$index" focus-target="focusTarget"></xh-cell>
-    </div>
-    <div class="cell-fixture static potential after">
-        <button ng-click="$ctrl.model.appendCell()" ng-disabled="!$ctrl.model.insertable">+</button>
-    </div>
-</figure>
-<div class="swingset">
-    <div class="loading-banner" ng-show="$ctrl.storeStatus == 'pending'">
-        <table>
-            <tr>
-                <td><img src="images/loading-squares.gif" title="Loading..."></td>
-                <td><span title="state: {{$ctrl.storeStatus}}">Preparing word database...</span></td>
-            </tr>
-        </table>
-    </div>
-    <div class="controls">
-        <div class="paging" ng-show="!!$ctrl.paging">
-            <span ng-hide="$ctrl.paging.actual == $ctrl.paging.total">{{$ctrl.paging.offset + 1}} to {{$ctrl.paging.offset + $ctrl.paging.actual}} of </span>
-            {{$ctrl.paging.total}} showing
+<div class="woodchips">
+    <figure class="monkeybars">
+        <div class="cell-fixture static potential before">
+            <button ng-click="$ctrl.model.prependCell()" ng-disabled="!$ctrl.model.insertable">+</button>
         </div>
-        <div class="search">
-            <label><input ng-model="$ctrl.searchDisabled" type="checkbox">Disable search</label>
+        <div class="cell-fixture repeat actual" ng-repeat="cell in $ctrl.model.cells">
+            <xh-cell model="cell" index="$index" focus-target="focusTarget"></xh-cell>
         </div>
-    </div>
-    <div class="possibles" ng-show="$ctrl.possibles.length > 0">
-        <ul>
-            <li ng-repeat="asset in $ctrl.possibles">{{asset.renderings[0]}}</li>
-        </ul>
+        <div class="cell-fixture static potential after">
+            <button ng-click="$ctrl.model.appendCell()" ng-disabled="!$ctrl.model.insertable">+</button>
+        </div>
+    </figure>
+    <div class="swingset">
+        <div class="loading-banner" ng-show="$ctrl.storeStatus == 'pending'">
+            <table>
+                <tr>
+                    <td><img src="images/loading-squares.gif" title="Loading..."></td>
+                    <td><span title="state: {{$ctrl.storeStatus}}">Preparing word database...</span></td>
+                </tr>
+            </table>
+        </div>
+        <div class="controls">
+            <div class="paging" ng-show="!!$ctrl.paging">
+                <span ng-hide="$ctrl.paging.actual == $ctrl.paging.total">{{$ctrl.paging.offset + 1}} to {{$ctrl.paging.offset + $ctrl.paging.actual}} of </span>
+                {{$ctrl.paging.total}} showing
+            </div>
+            <div class="search">
+                <label><input ng-model="$ctrl.searchDisabled" type="checkbox">Disable search</label>
+            </div>
+        </div>
+        <div class="possibles" ng-show="$ctrl.possibles.length > 0">
+            <ul>
+                <li ng-repeat="asset in $ctrl.possibles">{{asset.renderings[0]}}</li>
+            </ul>
+        </div>
     </div>
 </div>
-<div class="slide">
+<div class="slide" ng-class="{hidden: $ctrl.keyboardHidden}">
     <div class="kb-controls">
         <label>
             <input type="checkbox" ng-model="$ctrl.keyboardHidden">
             Hide
         </label>
     </div>
-    <div class="keyboard" ng-hide="$ctrl.keyboardHidden">
+    <div class="keyboard">
         <div class="row" ng-repeat="row in $ctrl.qwertyModel">
             <span class="key" ng-repeat="key in row">
                 <button ng-click="$ctrl.buttoned(key)" ng-disabled="!$ctrl.anyCellHasFocus">{{key}}</button>

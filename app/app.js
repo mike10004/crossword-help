@@ -8,8 +8,7 @@ window.onunhandledrejection = function (event) {
 // Declare app level module which depends on views, and components
 angular.module('crosswordHelpApp', [
   'ngRoute',
-  // 'ngWebworker',
-  // 'crosswordHelpApp.home'
+  'ngWebworker'
 ]).
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
   $locationProvider.hashPrefix('!');
